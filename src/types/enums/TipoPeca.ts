@@ -1,4 +1,4 @@
 export enum TipoPeca {
-  NACIONAL   = 'NACIONAL',
-  IMPORTADA  = 'IMPORTADA',
+  NACIONAL = 'NACIONAL',
+  IMPORTADA = 'IMPORTADA',
 }

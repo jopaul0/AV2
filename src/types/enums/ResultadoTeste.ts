@@ -1,4 +1,4 @@
 export enum ResultadoTeste {
-  APROVADO   = 'APROVADO',
-  REPROVADO  = 'REPROVADO',
+  APROVADO = 'APROVADO',
+  REPROVADO = 'REPROVADO',
 }
