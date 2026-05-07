@@ -28,7 +28,6 @@ export function Navbar() {
 
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2 font-bold text-lg text-primary tracking-tight select-none">
-                    <Plane size={20} />
                     AEROCODE
                 </Link>
 

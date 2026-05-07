@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { SubmitEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plane, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
 export function LoginPage() {
@@ -46,10 +46,7 @@ export function LoginPage() {
             <div className="w-full max-w-sm mx-4 animate-fade-in">
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 mb-4">
-                        <Plane size={28} className="text-primary" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-foreground">AEROCODE</h1>
+                    <h1 className="text-2xl font-bold text-primary tracking-tight select-none">AEROCODE</h1>
                     <p className="text-sm text-muted-foreground mt-1">
                         Sistema de gestão de produção de aeronaves
                     </p>
