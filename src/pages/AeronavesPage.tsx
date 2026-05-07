@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Search, Eye, Pencil } from 'lucide-react'
+import { Plus, Search, Eye } from 'lucide-react'
 import { useAeronaves } from '../hooks/useAeronaves'
 import { useAuth } from '../hooks/useAuth'
 import { StatusEtapaBadge, TipoAeronaveBadge } from '../components/ui/Badge'
@@ -97,7 +97,7 @@ export function AeronavesPage() {
         <table className="w-full">
           <thead className="border-b border-border">
             <tr>
-              {['Código', 'Modelo', 'Tipo', 'Capacidade', 'Etapa atual', 'Situação', 'Ações'].map(h => (
+              {['Código', 'Modelo', 'Tipo', 'Capacidade', 'Etapa atual', 'Situação', 'Detalhes'].map(h => (
                 <th key={h} className="table-header text-left py-3 px-4">{h}</th>
               ))}
             </tr>
@@ -126,11 +126,6 @@ export function AeronavesPage() {
                       <Link to={`/aeronaves/${a.codigo}`} className="btn-ghost p-1.5" title="Ver detalhes">
                         <Eye size={14} />
                       </Link>
-                      {isEngenheiro && (
-                        <Link to={`/aeronaves/${a.codigo}`} className="btn-ghost p-1.5" title="Editar">
-                          <Pencil size={14} />
-                        </Link>
-                      )}
                     </div>
                   </td>
                 </tr>

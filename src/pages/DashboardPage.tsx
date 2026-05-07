@@ -41,7 +41,7 @@ export function DashboardPage() {
             {/* Header */}
             <div>
                 <h1 className="section-title">
-                    Olá, {user?.nome.split(' ')[0]} 👋
+                    Olá, {user?.nome.split(' ')[0]}!
                 </h1>
                 <p className="section-subtitle mt-1">
                     Painel geral do sistema de produção de aeronaves
@@ -56,7 +56,7 @@ export function DashboardPage() {
                     icon={<Plane size={16} />}
                 />
                 <StatCard
-                    label="Em produção"
+                    label="Aeronaves em produção"
                     value={emProducao}
                     icon={<Clock size={16} />}
                 />
