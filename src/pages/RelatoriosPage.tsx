@@ -7,6 +7,7 @@ import { Download, Printer, FileText } from 'lucide-react'
 import { StatusPeca } from '../types/enums/StatusPeca'
 import { ResultadoTeste } from '../types/enums/ResultadoTeste'
 
+// ─── Lista de relatórios ─────────────────────────────────────────
 export function RelatoriosPage() {
     const { aeronaves } = useAeronaves()
     return (
@@ -39,6 +40,7 @@ export function RelatoriosPage() {
     )
 }
 
+// ─── Relatório individual ────────────────────────────────────────
 export function RelatorioDetailPage() {
     const { codigo } = useParams<{ codigo: string }>()
     const { getAeronave } = useAeronaves()

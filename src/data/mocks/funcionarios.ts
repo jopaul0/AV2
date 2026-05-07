@@ -1,5 +1,5 @@
-import type { Funcionario } from '../types/models/Funcionario'
-import { NivelPermissao } from '../types/enums/NivelPermissao'
+import type { Funcionario } from '../../types/models/Funcionario'
+import { NivelPermissao } from '../../types/enums/NivelPermissao'
 
 export const FUNCIONARIOS: Funcionario[] = [
     {

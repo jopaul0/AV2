@@ -1,13 +1,13 @@
-import type { Aeronave } from '../types/models/Aeronave'
-import type { Etapa } from '../types/models/Etapa'
-import type { Peca } from '../types/models/Peca'
-import type { Teste } from '../types/models/Teste'
-import { TipoAeronave } from '../types/enums/TipoAeronave'
-import { TipoPeca } from '../types/enums/TipoPeca'
-import { StatusPeca } from '../types/enums/StatusPeca'
-import { StatusEtapa } from '../types/enums/StatusEtapa'
-import { ResultadoTeste } from '../types/enums/ResultadoTeste'
-import { TipoTeste } from '../types/enums/TipoTeste'
+import type { Aeronave } from '../../types/models/Aeronave'
+import type { Etapa } from '../../types/models/Etapa'
+import type { Peca } from '../../types/models/Peca'
+import type { Teste } from '../../types/models/Teste'
+import { TipoAeronave } from '../../types/enums/TipoAeronave'
+import { TipoPeca } from '../../types/enums/TipoPeca'
+import { StatusPeca } from '../../types/enums/StatusPeca'
+import { StatusEtapa } from '../../types/enums/StatusEtapa'
+import { ResultadoTeste } from '../../types/enums/ResultadoTeste'
+import { TipoTeste } from '../../types/enums/TipoTeste'
 
 function makePecas(prefix: string): Peca[] {
     return [
