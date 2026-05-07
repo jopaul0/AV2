@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
 
 interface ModalProps {
@@ -14,16 +15,24 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
     useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
         document.addEventListener('keydown', handler)
-        return () => document.removeEventListener('keydown', handler)
-    }, [onClose])
+
+        if (open) {
+            document.body.style.overflow = 'hidden'
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handler)
+            document.body.style.overflow = 'unset'
+        }
+    }, [open, onClose])
 
     if (!open) return null
 
     const widths = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl' }
 
-    return (
+    return createPortal(
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
             style={{ background: 'rgba(0,0,0,0.6)' }}
             onClick={onClose}
         >
@@ -43,6 +52,7 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
                     {children}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
