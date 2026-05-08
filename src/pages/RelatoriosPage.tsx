@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
+import { formatDate } from '../utils/date'
 import { useAeronaves } from '../hooks/useAeronaves'
 import { StatCard } from '../components/ui/StatCard'
 import { ResultadoBadge, StatusEtapaBadge, StatusPecaBadge } from '../components/ui/Badge'
@@ -7,7 +8,6 @@ import { Download, Printer, FileText } from 'lucide-react'
 import { StatusPeca } from '../types/enums/StatusPeca'
 import { ResultadoTeste } from '../types/enums/ResultadoTeste'
 
-// ─── Lista de relatórios ─────────────────────────────────────────
 export function RelatoriosPage() {
     const { aeronaves } = useAeronaves()
     return (
@@ -40,7 +40,6 @@ export function RelatoriosPage() {
     )
 }
 
-// ─── Relatório individual ────────────────────────────────────────
 export function RelatorioDetailPage() {
     const { codigo } = useParams<{ codigo: string }>()
     const { getAeronave } = useAeronaves()
@@ -71,7 +70,7 @@ export function RelatorioDetailPage() {
                 `Capacidade: ${aeronave.capacidade} pax`,
                 `Alcance: ${aeronave.alcance} km`,
                 `Cliente: ${aeronave.cliente || '—'}`,
-                `Data de entrega: ${aeronave.dataEntrega || '—'}`,
+                `Data de entrega: ${formatDate(aeronave.dataEntrega)}`,
                 '',
                 '--- ETAPAS ---',
                 ...aeronave.etapas.map(e => `${e.nome}: ${e.status} (prazo: ${e.prazo})`),
@@ -80,7 +79,7 @@ export function RelatorioDetailPage() {
                 ...aeronave.pecas.map(p => `${p.nome} | ${p.tipo} | ${p.fornecedor} | ${p.status}`),
                 '',
                 '--- TESTES ---',
-                ...aeronave.testes.map(t => `${t.tipo}: ${t.resultado} (${t.data})`),
+                ...aeronave.testes.map(t => `${t.tipo}: ${t.resultado} (${formatDate(t.data)})`),
                 '',
                 `Gerado em: ${new Date().toLocaleString('pt-BR')}`,
             ].join('\n')
@@ -103,7 +102,7 @@ export function RelatorioDetailPage() {
                     <h1 className="section-title">{aeronave.codigo} / {aeronave.modelo} / {aeronave.tipo}</h1>
                     <p className="section-subtitle mt-1">
                         {aeronave.cliente && `Cliente: ${aeronave.cliente}`}
-                        {aeronave.dataEntrega && ` · Entrega: ${aeronave.dataEntrega}`}
+                        {aeronave.dataEntrega && ` · Entrega: ${formatDate(aeronave.dataEntrega)}`}
                     </p>
                 </div>
                 {/* Export buttons */}

@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Plus, FileText } from 'lucide-react'
+import { ArrowLeft, Plus, FileText, AlertCircle } from 'lucide-react'
 import { useAeronaves } from '../hooks/useAeronaves'
 import { useAuth } from '../hooks/useAuth'
 import { StatusPecaBadge, StatusEtapaBadge, ResultadoBadge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
-import { FUNCIONARIOS } from '../data/mocks/funcionarios'
+import { useFuncionarios } from '../hooks/useFuncionarios'
 import { TipoPeca } from '../types/enums/TipoPeca'
 import { TipoTeste } from '../types/enums/TipoTeste'
 import { ResultadoTeste } from '../types/enums/ResultadoTeste'
 import { StatusPeca } from '../types/enums/StatusPeca'
 import { StatusEtapa } from '../types/enums/StatusEtapa'
-
+import { formatDate } from '../utils/date'
 
 type Tab = 'pecas' | 'etapas' | 'funcionarios' | 'testes'
 
@@ -19,17 +19,14 @@ export function AeronaveDetailPage() {
     const { codigo } = useParams<{ codigo: string }>()
     const { getAeronave, updatePecaStatus, addEtapa, avancarEtapa, addTeste, addPeca } = useAeronaves()
     const { isEngenheiro } = useAuth()
+    const { funcionarios } = useFuncionarios()
     const navigate = useNavigate()
 
     const aeronave = getAeronave(codigo!)
     const [tab, setTab] = useState<Tab>('pecas')
-
-    // Modais
     const [modalPeca, setModalPeca] = useState(false)
     const [modalEtapa, setModalEtapa] = useState(false)
     const [modalTeste, setModalTeste] = useState(false)
-
-    // Forms
     const [formPeca, setFormPeca] = useState({ nome: '', tipo: TipoPeca.NACIONAL, fornecedor: '', status: StatusPeca.EM_PRODUCAO })
     const [formEtapa, setFormEtapa] = useState({ nome: '', prazo: '' })
     const [formTeste, setFormTeste] = useState({ tipo: TipoTeste.ELETRICO, resultado: ResultadoTeste.APROVADO })
@@ -41,6 +38,8 @@ export function AeronaveDetailPage() {
         </div>
     )
 
+    const etapaEmAndamento = aeronave.etapas.find(e => e.status === StatusEtapa.ANDAMENTO)
+
     const tabs: { id: Tab; label: string; count: number }[] = [
         { id: 'pecas', label: 'Peças', count: aeronave.pecas.length },
         { id: 'etapas', label: 'Etapas', count: aeronave.etapas.length },
@@ -50,11 +49,10 @@ export function AeronaveDetailPage() {
 
     const allFuncionarios = aeronave.etapas.flatMap(e => e.funcionarios)
     const uniqueFuncIds = [...new Set(allFuncionarios)]
-    const funcDaAeronave = FUNCIONARIOS.filter(f => uniqueFuncIds.includes(f.id))
+    const funcDaAeronave = funcionarios.filter(f => uniqueFuncIds.includes(f.id))
 
     return (
         <div className="space-y-6 animate-fade-in">
-            {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <button onClick={() => navigate('/aeronaves')} className="flex items-center gap-1 hover:text-foreground transition-colors">
                     <ArrowLeft size={14} /> Aeronaves
@@ -66,12 +64,11 @@ export function AeronaveDetailPage() {
             {/* Header */}
             <div className="flex items-start justify-between">
                 <div>
-                    <h1 className="section-title">
-                        {aeronave.codigo} / {aeronave.modelo} / {aeronave.tipo}
-                    </h1>
+                    <h1 className="section-title">{aeronave.codigo} / {aeronave.modelo} / {aeronave.tipo}</h1>
                     <p className="section-subtitle mt-1">
                         Capacidade: {aeronave.capacidade} pax · Alcance: {aeronave.alcance} km
                         {aeronave.cliente && ` · Cliente: ${aeronave.cliente}`}
+                        {aeronave.dataEntrega && ` · Entrega: ${formatDate(aeronave.dataEntrega)}`}
                     </p>
                 </div>
                 <Link to={`/relatorios/${aeronave.codigo}`} className="btn-primary flex items-center gap-2">
@@ -82,25 +79,19 @@ export function AeronaveDetailPage() {
             {/* Tabs */}
             <div className="border-b border-border flex gap-1">
                 {tabs.map(t => (
-                    <button
-                        key={t.id}
-                        onClick={() => setTab(t.id)}
-                        className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-150 -mb-px ${tab === t.id
-                                ? 'border-primary text-primary'
-                                : 'border-transparent text-muted-foreground hover:text-foreground'
+                    <button key={t.id} onClick={() => setTab(t.id)}
+                        className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-150 -mb-px ${tab === t.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                     >
                         {t.label}
                         {t.count > 0 && (
-                            <span className="ml-1.5 text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded-sm">
-                                {t.count}
-                            </span>
+                            <span className="ml-1.5 text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded-sm">{t.count}</span>
                         )}
                     </button>
                 ))}
             </div>
 
-            {/* ── Peças ── */}
+            {/* Peças */}
             {tab === 'pecas' && (
                 <div className="space-y-4 animate-fade-in">
                     {isEngenheiro && (
@@ -128,11 +119,8 @@ export function AeronaveDetailPage() {
                                         <td className="table-cell"><StatusPecaBadge status={p.status} /></td>
                                         {isEngenheiro && (
                                             <td className="table-cell">
-                                                <select
-                                                    className="input text-xs py-1 px-2 w-36"
-                                                    value={p.status}
-                                                    onChange={e => updatePecaStatus(aeronave.codigo, p.id, e.target.value as StatusPeca)}
-                                                >
+                                                <select className="input text-xs py-1 px-2 w-36" value={p.status}
+                                                    onChange={e => updatePecaStatus(aeronave.codigo, p.id, e.target.value as StatusPeca)}>
                                                     <option value={StatusPeca.EM_PRODUCAO}>Em produção</option>
                                                     <option value={StatusPeca.EM_TRANSPORTE}>Em transporte</option>
                                                     <option value={StatusPeca.PRONTA}>Pronta</option>
@@ -147,7 +135,7 @@ export function AeronaveDetailPage() {
                 </div>
             )}
 
-            {/* ── Etapas ── */}
+            {/* Etapas */}
             {tab === 'etapas' && (
                 <div className="space-y-4 animate-fade-in">
                     {isEngenheiro && (
@@ -155,39 +143,59 @@ export function AeronaveDetailPage() {
                             <Plus size={14} /> Adicionar etapa
                         </button>
                     )}
+
+                    {etapaEmAndamento && (
+                        <div className="flex items-center gap-2 text-xs text-warning bg-warning/10 border border-warning/20 rounded-md px-3 py-2">
+                            <AlertCircle size={14} />
+                            Etapa <strong className="mx-1">"{etapaEmAndamento.nome}"</strong> está em andamento.
+                            Finalize-a antes de iniciar outra.
+                        </div>
+                    )}
+
                     <div className="space-y-3">
                         {aeronave.etapas.length === 0 && (
                             <p className="text-muted-foreground text-sm">Nenhuma etapa cadastrada.</p>
                         )}
-                        {aeronave.etapas.map((e, idx) => (
-                            <div key={e.id} className="card flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
-                                        {idx + 1}
-                                    </span>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground">{e.nome}</p>
-                                        <p className="text-xs text-muted-foreground">Prazo: {e.prazo}</p>
+                        {aeronave.etapas.map((e, idx) => {
+                            const podeIniciar = e.status === StatusEtapa.PENDENTE && !etapaEmAndamento
+                            const podeFinalizar = e.status === StatusEtapa.ANDAMENTO
+
+                            return (
+                                <div key={e.id} className={`card flex items-center justify-between gap-4 ${e.status === StatusEtapa.ANDAMENTO ? 'border-warning/40' : ''
+                                    }`}>
+                                    <div className="flex items-center gap-3">
+                                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                                            {idx + 1}
+                                        </span>
+                                        <div>
+                                            <p className="text-sm font-medium text-foreground">{e.nome}</p>
+                                            <p className="text-xs text-muted-foreground">Prazo: {formatDate(e.prazo)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <StatusEtapaBadge status={e.status} />
+                                        {isEngenheiro && (podeIniciar || podeFinalizar) && (
+                                            <button
+                                                onClick={() => avancarEtapa(aeronave.codigo, e.id)}
+                                                className="btn-secondary text-xs py-1 px-2"
+                                            >
+                                                {podeIniciar ? 'Iniciar' : 'Finalizar'}
+                                            </button>
+                                        )}
+                                        {isEngenheiro && e.status === StatusEtapa.PENDENTE && etapaEmAndamento && (
+                                            <span className="text-xs text-muted-foreground opacity-50 cursor-not-allowed px-2">
+                                                Bloqueada
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <StatusEtapaBadge status={e.status} />
-                                    {isEngenheiro && e.status !== StatusEtapa.CONCLUIDA && (
-                                        <button
-                                            onClick={() => avancarEtapa(aeronave.codigo, e.id)}
-                                            className="btn-secondary text-xs py-1 px-2"
-                                        >
-                                            {e.status === StatusEtapa.PENDENTE ? 'Iniciar' : 'Finalizar'}
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 </div>
             )}
 
-            {/* ── Funcionários ── */}
+            {/* Funcionários */}
             {tab === 'funcionarios' && (
                 <div className="space-y-3 animate-fade-in">
                     {funcDaAeronave.length === 0 && (
@@ -208,7 +216,7 @@ export function AeronaveDetailPage() {
                 </div>
             )}
 
-            {/* ── Testes ── */}
+            {/* Testes */}
             {tab === 'testes' && (
                 <div className="space-y-4 animate-fade-in">
                     {isEngenheiro && (
@@ -232,7 +240,7 @@ export function AeronaveDetailPage() {
                                     <tr key={t.id} className="table-row">
                                         <td className="table-cell font-medium">{t.tipo}</td>
                                         <td className="table-cell"><ResultadoBadge resultado={t.resultado} /></td>
-                                        <td className="table-cell text-xs text-muted-foreground">{t.data}</td>
+                                        <td className="table-cell text-xs text-muted-foreground">{formatDate(t.data)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -241,7 +249,7 @@ export function AeronaveDetailPage() {
                 </div>
             )}
 
-            {/* ── Modais ── */}
+            {/* Modais */}
             <Modal open={modalPeca} onClose={() => setModalPeca(false)} title="Adicionar peça">
                 <div className="flex flex-col gap-4">
                     {[
@@ -263,10 +271,7 @@ export function AeronaveDetailPage() {
                         </select>
                     </div>
                     <div className="flex gap-2 pt-2">
-                        <button onClick={() => {
-                            addPeca(aeronave.codigo, { id: `P${Date.now()}`, ...formPeca })
-                            setModalPeca(false)
-                        }} className="btn-primary flex-1">Adicionar</button>
+                        <button onClick={() => { addPeca(aeronave.codigo, { id: `P${Date.now()}`, ...formPeca }); setModalPeca(false) }} className="btn-primary flex-1">Adicionar</button>
                         <button onClick={() => setModalPeca(false)} className="btn-secondary flex-1">Cancelar</button>
                     </div>
                 </div>

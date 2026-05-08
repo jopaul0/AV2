@@ -1,6 +1,7 @@
 import { useAeronaves } from '../hooks/useAeronaves'
 import { ResultadoBadge } from '../components/ui/Badge'
 import { Link } from 'react-router-dom'
+import { formatDate } from '../utils/date'
 
 export function TestesPage() {
     const { aeronaves } = useAeronaves()
@@ -41,7 +42,7 @@ export function TestesPage() {
                                 </td>
                                 <td className="table-cell">{t.tipo}</td>
                                 <td className="table-cell"><ResultadoBadge resultado={t.resultado} /></td>
-                                <td className="table-cell text-xs text-muted-foreground">{t.data}</td>
+                                <td className="table-cell text-xs text-muted-foreground">{formatDate(t.data)}</td>
                             </tr>
                         ))}
                     </tbody>
