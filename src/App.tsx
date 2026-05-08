@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { AeronavesProvider } from './hooks/useAeronaves'
+import { FuncionariosProvider } from './hooks/useFuncionarios'
 import { Layout } from './components/layout/Layout'
 
 import { LoginPage } from './pages/LoginPage'
@@ -11,6 +12,11 @@ import { FuncionariosPage } from './pages/FuncionariosPage'
 import { TestesPage } from './pages/TestesPage'
 import { RelatoriosPage, RelatorioDetailPage } from './pages/RelatoriosPage'
 import { PerfilPage } from './pages/PerfilPage'
+import { SobrePage } from './pages/SobrePage'
+import { DocumentacaoPage } from './pages/DocumentacaoPage'
+import { SuportePage } from './pages/SuportePage'
+import { ApiPage } from './pages/ApiPage'
+import { PrivacidadePage } from './pages/PrivacidadePage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
@@ -33,6 +39,12 @@ function AppRoutes() {
       <Route path="/relatorios/:codigo" element={<ProtectedRoute><RelatorioDetailPage /></ProtectedRoute>} />
       <Route path="/perfil" element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
 
+      <Route path="/sobre" element={<Layout><SobrePage /></Layout>} />
+      <Route path="/documentacao" element={<Layout><DocumentacaoPage /></Layout>} />
+      <Route path="/suporte" element={<Layout><SuportePage /></Layout>} />
+      <Route path="/api" element={<Layout><ApiPage /></Layout>} />
+      <Route path="/privacidade" element={<Layout><PrivacidadePage /></Layout>} />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
@@ -42,9 +54,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AeronavesProvider>
-          <AppRoutes />
-        </AeronavesProvider>
+        <FuncionariosProvider>
+          <AeronavesProvider>
+            <AppRoutes />
+          </AeronavesProvider>
+        </FuncionariosProvider>
       </AuthProvider>
     </BrowserRouter>
   )
