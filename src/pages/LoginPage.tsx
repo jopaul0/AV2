@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { SubmitEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+
+import millenniumImg from '../assets/millennium.png'
+import vaderImg from '../assets/vader.png'
 
 export function LoginPage() {
     const { login } = useAuth()
@@ -12,6 +15,25 @@ export function LoginPage() {
     const [showSenha, setShowSenha] = useState(false)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    const [showEasterEgg, setShowEasterEgg] = useState(false)
+    const [showVader, setShowVader] = useState(false)
+
+
+    useEffect(() => {
+        const falconTimer = setTimeout(() => {
+            setShowEasterEgg(true)
+        }, 20000)
+
+        const vaderTimer = setTimeout(() => {
+            setShowVader(true)
+        }, 25000)
+
+        return () => {
+            clearTimeout(falconTimer)
+            clearTimeout(vaderTimer)
+        }
+    }, [])
 
     const handleSubmit = async (e: SubmitEvent) => {
         e.preventDefault()
@@ -29,7 +51,6 @@ export function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
-
             {/* Background decorativo */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div
@@ -41,6 +62,27 @@ export function LoginPage() {
                     style={{ background: 'radial-gradient(circle, hsl(217 91% 58%) 0%, transparent 70%)' }}
                 />
             </div>
+
+            {showEasterEgg && (
+                <img
+                    src={millenniumImg}
+                    alt="Millennium Falcon"
+                    className="absolute top-10 left-0 w-32 z-50 pointer-events-none animate-millennium"
+                />
+            )}
+
+            {showVader && (
+                <div className="absolute bottom-0 right-10 z-50 pointer-events-none animate-vader flex flex-col items-center">
+                    <p className="text-[10px] font-bold bg-destructive text-white px-2 py-0.5 rounded-t-md animate-fade-in">
+                        Eu sou seu pai!
+                    </p>
+                    <img
+                        src={vaderImg}
+                        alt="Darth Vader"
+                        className="w-40 h-auto"
+                    />
+                </div>
+            )}
 
             {/* Card */}
             <div className="w-full max-w-sm mx-4 animate-fade-in">
