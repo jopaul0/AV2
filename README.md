@@ -15,6 +15,7 @@ O **Aerocode** é o frontend (protótipo navegável) de um sistema de gestão de
 
 Este projeto é a **Atividade de Avaliação 2 (AV2)** da disciplina de Programação Orientada a Objetos.
 
+> Protótipo disponível no [Figma](https://www.figma.com/design/mJ7McnkVv8SwthByrRoEBN/AV2-Aerocode?node-id=0-1&t=U9CTu44kJRdUZblm-1)
 ---
 
 ## Tecnologias
@@ -187,6 +188,7 @@ font-family: 'Inter', sans-serif;
 - **Protótipo navegável**: o projeto atende ao requisito da AV2 de SPA funcional sem backend, executável como servidor estático.
 - **Datas no padrão brasileiro**: todas as datas são exibidas no formato `dd/mm/aaaa`.
 
+> Relatório de Interface disponível no diretório [/docs](./docs) (tanto em PDF quanto em markdown).
 ---
 
 ## Autor
